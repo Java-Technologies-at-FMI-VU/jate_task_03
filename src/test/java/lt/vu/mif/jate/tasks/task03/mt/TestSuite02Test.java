@@ -11,6 +11,7 @@ import org.junit.runners.JUnit4;
 /**
  * Test that server is dropping the subsequent
  * connections from the same IP. Only one is allowed!
+ * No worries - this test suite must pass (in the beginning...)!
  * @author valdo
  */
 @RunWith(JUnit4.class)
@@ -19,6 +20,9 @@ public class TestSuite02Test implements ClientTest {
     @Test
     public void ClientTest() {
         try (Client c1 = new Client(SERVER_ADDR)) {
+            
+            test("first connection works", c1);
+            
             try (Client c2 = new Client(SERVER_ADDR)) {
                 
                 test("second connection fails", c2);
@@ -28,8 +32,6 @@ public class TestSuite02Test implements ClientTest {
                 // OK - it failed!
                 System.out.println("OK!");
             }
-
-            test("first connection works", c1);
 
         } catch (Exception ex) {
             fail(ex.getMessage());

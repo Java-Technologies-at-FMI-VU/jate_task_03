@@ -14,7 +14,7 @@ import org.junit.Test;
  */
 public interface ClientTest {
 
-    public static final InetSocketAddress SERVER_ADDR = new InetSocketAddress("193.219.42.49", 8173);
+    public static final InetSocketAddress SERVER_ADDR = new InetSocketAddress("193.219.91.103", 8888);
     
     @Test
     public default void test(String name, Client c) throws IOException, ServerFunctionException {

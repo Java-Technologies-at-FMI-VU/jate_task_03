@@ -3,7 +3,6 @@ package lt.vu.mif.jate.tasks.task03.mt;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,7 +11,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import lt.vu.mif.jate.tasks.task03.mt.tool.ClientTest;
 import static junit.framework.TestCase.fail;
 import static junit.framework.TestCase.assertFalse;
-import lombok.Getter;
 import lt.vu.mif.jate.tasks.task03.mt.client.Client;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,19 +18,20 @@ import org.junit.runners.JUnit4;
 
 /**
  * Simple Client class test. Single connection, single thread.
- *
+ * No worries - this test suite must pass (in the beginning...)!
+ * 
  * @author valdo
  */
 @RunWith(JUnit4.class)
 public class TestSuite01Test implements ClientTest {
 
     /**
-     * Should be working right away!
+     * Passing all the tests.
      */
     @Test
     public void ClientTest() {
         try (Client c = new Client(SERVER_ADDR)) {
-
+            
             //Thread.sleep(60000);
             test("Simple test", c);
 

@@ -12,7 +12,7 @@
       <property name="hibernate.max_fetch_depth" value="3"/>
       <property name="hibernate.cache.provider_class" value="net.sf.ehcache.hibernate.NoCacheProvider"/>
       <property name="hibernate.generate_statistics" value="false"/>
-      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://193.219.42.49:3173/stud"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://193.219.91.103:2230/stud"/>
       <property name="javax.persistence.jdbc.user" value="stud"/>
       <property name="javax.persistence.jdbc.password" value="stud"/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
