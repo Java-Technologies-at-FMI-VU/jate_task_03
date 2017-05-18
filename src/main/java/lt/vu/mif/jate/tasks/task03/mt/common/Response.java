@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Response {
     
-    PONG(0),
+    Pong(0),
     Success(1),
     Error(2),
     Closed(3);

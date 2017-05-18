@@ -16,7 +16,8 @@ public enum ServerFunction {
     Multiplication(3),
     Division(4),
     Function01(5),
-    Function02(6);
+    Function02(6),
+    Close(7);
 
     @Getter
     private final int code;

@@ -21,7 +21,7 @@ public class TestSuite02Test implements ClientTest {
     public void ClientTest() {
         try (Client c1 = new Client(SERVER_ADDR)) {
             
-            test("first connection works", c1);
+            test("first connection works one", c1);
             
             try (Client c2 = new Client(SERVER_ADDR)) {
                 
@@ -32,6 +32,8 @@ public class TestSuite02Test implements ClientTest {
                 // OK - it failed!
                 System.out.println("OK!");
             }
+            
+            test("first connection works two", c1);
 
         } catch (Exception ex) {
             fail(ex.getMessage());

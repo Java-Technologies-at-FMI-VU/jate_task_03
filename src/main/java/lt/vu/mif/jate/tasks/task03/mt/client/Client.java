@@ -37,31 +37,35 @@ public class Client implements AutoCloseable {
         this.socket = new Socket(addr.getAddress(), addr.getPort());
     }
     
+    public final void ping() throws ServerFunctionException, IOException {
+        this.exec(new Message(ServerFunction.Ping));
+    }
+    
     public Long addition(Long op1, Long op2) throws ServerFunctionException, IOException {
-        return exec(ServerFunction.Addition, op1, op2);
+        return exec(new MessageWithArgs(ServerFunction.Addition, op1, op2));
     }
     
     public Long substraction(Long op1, Long op2) throws ServerFunctionException, IOException {
-        return exec(ServerFunction.Substraction, op1, op2);
+        return exec(new MessageWithArgs(ServerFunction.Substraction, op1, op2));
     }
     
     public Long multiplication(Long op1, Long op2) throws ServerFunctionException, IOException {
-        return exec(ServerFunction.Multiplication, op1, op2);
+        return exec(new MessageWithArgs(ServerFunction.Multiplication, op1, op2));
     }
     
     public Long division(Long op1, Long op2) throws ServerFunctionException, IOException {
-        return exec(ServerFunction.Division, op1, op2);
+        return exec(new MessageWithArgs(ServerFunction.Division, op1, op2));
     }
     
     public Long function01(Long op1, Long op2) throws ServerFunctionException, IOException {
-        return exec(ServerFunction.Function01, op1, op2);
+        return exec(new MessageWithArgs(ServerFunction.Function01, op1, op2));
     }
 
     public Long function02(Long op1, Long op2) throws ServerFunctionException, IOException {
-        return exec(ServerFunction.Function02, op1, op2);
+        return exec(new MessageWithArgs(ServerFunction.Function02, op1, op2));
     }
-
-    private Long exec(ServerFunction func, Long op1, Long op2) throws ServerFunctionException, IOException {
+    
+    private Long exec(Message msg) throws ServerFunctionException, IOException {
         
         OutputStream out = socket.getOutputStream();
         InputStream in = socket.getInputStream();
@@ -71,8 +75,7 @@ public class Client implements AutoCloseable {
         //
         
         // Building a message and a header
-        Message m = new Message(func, op1, op2);
-        ByteBuffer bytes = m.toBytes();
+        ByteBuffer bytes = msg.toBytes();
         ByteBuffer sizeb = Message.toBytes(bytes.capacity());
         
         // Write both header and body
@@ -104,9 +107,17 @@ public class Client implements AutoCloseable {
         long corr = body.getLong();
         
         // Check if it is my message
-        if (corr == m.getCorrelation()) {
+        if (corr == msg.getCorrelation()) {
             switch (resp) {
                 
+                case Pong:
+                    
+                    return 0L;
+                
+                case Closed:
+                    
+                    return 0L;
+                    
                 case Success:
                     
                     // Return result
@@ -125,7 +136,7 @@ public class Client implements AutoCloseable {
                     
             }
         } else {
-            throw new IOException("Wrong correlation id received: expected " + m.getCorrelation() + ", got " + corr);
+            throw new IOException("Wrong correlation id received: expected " + msg.getCorrelation() + ", got " + corr);
         }
         
         return 0L;
@@ -133,7 +144,16 @@ public class Client implements AutoCloseable {
     
     @Override
     public void close() throws Exception {
+        
+        // Lets try to close gracefully...
+        try {
+            this.exec(new Message(ServerFunction.Close));
+        } catch (ServerFunctionException | IOException ex) {
+            // and do not worry if failed.
+        }
+        
         socket.close();
+        
     }
 
 }

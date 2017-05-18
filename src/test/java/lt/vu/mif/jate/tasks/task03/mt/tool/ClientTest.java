@@ -22,6 +22,8 @@ public interface ClientTest {
 
         System.out.format("# Start [%s] on %s%n", name, Thread.currentThread());
         
+        c.ping();
+        
         r = c.addition(10L, 20L);
         assertEquals(30L, r);
         
@@ -42,6 +44,8 @@ public interface ClientTest {
             assertEquals("Overflow", msg);
         }
         
+        c.ping();
+        
         r = c.multiplication(Long.MAX_VALUE, 1L);
         assertEquals(Long.MAX_VALUE, r);
 
@@ -61,6 +65,8 @@ public interface ClientTest {
             assertEquals("Overflow", msg);
         }
 
+        c.ping();
+        
         System.out.format("# End [%s] on %s%n", name, Thread.currentThread());
         
     }
