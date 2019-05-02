@@ -2,9 +2,7 @@ package lt.vu.mif.jate.tasks.task03.mt.client;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicLong;
-import lombok.Getter;
 
-@Getter
 public class Message {
 
     private static final AtomicLong CORRELATION_SEQ = new AtomicLong();
@@ -31,5 +29,13 @@ public class Message {
         b.rewind();
         return b;
     }
-    
+
+    public ServerFunction getCode() {
+        return code;
+    }
+
+    public Long getCorrelation() {
+        return correlation;
+    }
+
 }

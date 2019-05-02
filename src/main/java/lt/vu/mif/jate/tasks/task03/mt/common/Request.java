@@ -1,15 +1,10 @@
 package lt.vu.mif.jate.tasks.task03.mt.common;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 /**
  * Request codes
  * @author valdo
  */
 
-@Getter
-@RequiredArgsConstructor
 public enum Request {
     
     Ping(0),
@@ -22,6 +17,14 @@ public enum Request {
     Close(7);
     
     private final int code;
+
+    private Request(int code) {
+        this.code = code;
+    }
+
+    public int getCode() {
+        return code;
+    }
     
     public static Request fromInt(int code) {
         for (Request r: values()) {

@@ -1,13 +1,9 @@
 package lt.vu.mif.jate.tasks.task03.mt.client;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 /**
  * ServerFunction class
  * @author valdo
  */
-@RequiredArgsConstructor
 public enum ServerFunction {
 
     Ping(0),
@@ -19,7 +15,14 @@ public enum ServerFunction {
     Function02(6),
     Close(7);
 
-    @Getter
     private final int code;
 
+    private ServerFunction(int code) {
+        this.code = code;
+    }
+
+    public int getCode() {
+        return code;
+    }
+    
 }

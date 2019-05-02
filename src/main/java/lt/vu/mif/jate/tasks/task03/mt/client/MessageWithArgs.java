@@ -1,9 +1,7 @@
 package lt.vu.mif.jate.tasks.task03.mt.client;
 
 import java.nio.ByteBuffer;
-import lombok.Getter;
 
-@Getter
 public class MessageWithArgs extends Message {
 
     private final Long op1;
@@ -13,6 +11,14 @@ public class MessageWithArgs extends Message {
         super(code);
         this.op1 = op1;
         this.op2 = op2;
+    }
+
+    public Long getOp1() {
+        return op1;
+    }
+
+    public Long getOp2() {
+        return op2;
     }
     
     @Override

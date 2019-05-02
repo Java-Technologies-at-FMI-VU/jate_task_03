@@ -3,7 +3,6 @@ package lt.vu.mif.jate.tasks.task03.mt;
 import lt.vu.mif.jate.tasks.task03.mt.tool.ClientTest;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.extern.java.Log;
 import lt.vu.mif.jate.tasks.task03.mt.client.Client;
 import lt.vu.mif.jate.tasks.task03.mt.tool.MultiThreadedTestCase;
 import lt.vu.mif.jate.tasks.task03.mt.tool.TestCaseRunnable;
@@ -16,7 +15,6 @@ import org.junit.runners.JUnit4;
  * clients should be able to send and receive correlated messages.
  * @author valdo
  */
-@Log
 @RunWith(JUnit4.class)
 public class TestSuite04Test extends MultiThreadedTestCase implements ClientTest {
 
