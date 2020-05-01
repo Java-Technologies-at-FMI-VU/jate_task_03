@@ -7,7 +7,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.logging.Logger;
-import lt.vu.mif.jate.tasks.task03.mt.common.Request;
 import lt.vu.mif.jate.tasks.task03.mt.common.Response;
 
 /**
@@ -42,12 +41,16 @@ public class Client implements AutoCloseable {
         this.socket = new Socket(addr.getAddress(), addr.getPort());
     }
     
+    public final void ping() throws ServerFunctionException, IOException {
+        this.exec(new Message(ServerFunction.Ping, 0L));
+    }
+    
     public Long addition(Long op1, Long op2) throws ServerFunctionException, IOException {
         return addition(op1, op2, 0L);
     }
 
     public Long addition(Long op1, Long op2, Long delay) throws ServerFunctionException, IOException {
-        return exec(ServerFunction.Addition, op1, op2, delay);
+        return exec(new MessageWithArgs(ServerFunction.Addition, op1, op2, delay));
     }
     
     public Long substraction(Long op1, Long op2) throws ServerFunctionException, IOException {
@@ -55,7 +58,7 @@ public class Client implements AutoCloseable {
     }
     
     public Long substraction(Long op1, Long op2, Long delay) throws ServerFunctionException, IOException {
-        return exec(ServerFunction.Substraction, op1, op2, delay);
+        return exec(new MessageWithArgs(ServerFunction.Substraction, op1, op2, delay));
     }
     
     public Long multiplication(Long op1, Long op2) throws ServerFunctionException, IOException {
@@ -63,7 +66,7 @@ public class Client implements AutoCloseable {
     }
     
     public Long multiplication(Long op1, Long op2, Long delay) throws ServerFunctionException, IOException {
-        return exec(ServerFunction.Multiplication, op1, op2, delay);
+        return exec(new MessageWithArgs(ServerFunction.Multiplication, op1, op2, delay));
     }
     
     public Long division(Long op1, Long op2) throws ServerFunctionException, IOException {
@@ -71,7 +74,7 @@ public class Client implements AutoCloseable {
     }
     
     public Long division(Long op1, Long op2, Long delay) throws ServerFunctionException, IOException {
-        return exec(ServerFunction.Division, op1, op2, delay);
+        return exec(new MessageWithArgs(ServerFunction.Division, op1, op2, delay));
     }
     
     public Long function01(Long op1, Long op2) throws ServerFunctionException, IOException {
@@ -79,7 +82,7 @@ public class Client implements AutoCloseable {
     }
     
     public Long function01(Long op1, Long op2, Long delay) throws ServerFunctionException, IOException {
-        return exec(ServerFunction.Function01, op1, op2, delay);
+        return exec(new MessageWithArgs(ServerFunction.Function01, op1, op2, delay));
     }
     
     public Long function02(Long op1, Long op2) throws ServerFunctionException, IOException {
@@ -87,10 +90,10 @@ public class Client implements AutoCloseable {
     }
 
     public Long function02(Long op1, Long op2, Long delay) throws ServerFunctionException, IOException {
-        return exec(ServerFunction.Function02, op1, op2, delay);
+        return exec(new MessageWithArgs(ServerFunction.Function02, op1, op2, delay));
     }
 
-    private Long exec(ServerFunction func, Long op1, Long op2, Long delay) 
+    private Long exec(Message m) 
             throws ServerFunctionException, IOException {
         
         OutputStream out = socket.getOutputStream();
@@ -101,7 +104,6 @@ public class Client implements AutoCloseable {
         //
         
         // Building a message and a header
-        Message m = new Message(func, op1, op2, delay);
         ByteBuffer bytes = m.toBytes();
         ByteBuffer sizeb = Message.toBytes(bytes.capacity());
         
