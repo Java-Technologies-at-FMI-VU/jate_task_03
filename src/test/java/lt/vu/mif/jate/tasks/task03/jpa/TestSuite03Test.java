@@ -1,7 +1,6 @@
 package lt.vu.mif.jate.tasks.task03.jpa;
 
 import java.util.Set;
-import javax.security.auth.Subject;
 import static junit.framework.TestCase.*;
 import lt.vu.mif.jate.tasks.task03.jpa.model.Subject;
 import lt.vu.mif.jate.tasks.task03.jpa.model.Product;
