@@ -6,6 +6,8 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.util.logging.Logger;
+import lt.vu.mif.jate.tasks.task03.mt.common.Request;
 import lt.vu.mif.jate.tasks.task03.mt.common.Response;
 
 /**
@@ -16,6 +18,7 @@ import lt.vu.mif.jate.tasks.task03.mt.common.Response;
  * - message length (int, 4 bytes): length of the remaining message
  * - request code (int, 4 bytes): message (operation) type, @see lt.vu.mif.jate.tasks.task03.mt.common.Request
  * - correlation id (long, 8 bytes): id to correlate request-response pair
+ * - delay (long, 8 bytes): request to delay the response in ms
  * - operand1 (long, 8 bytes, optional): first operand
  * - operand2 (long, 8 bytes, optional): second operand
  * 
@@ -31,41 +34,64 @@ import lt.vu.mif.jate.tasks.task03.mt.common.Response;
  */
 public class Client implements AutoCloseable {
 
+    private static final Logger LOG = Logger.getLogger(Client.class.getName());
+    
     private final Socket socket;
     
     public Client(InetSocketAddress addr) throws IOException {
         this.socket = new Socket(addr.getAddress(), addr.getPort());
     }
     
-    public final void ping() throws ServerFunctionException, IOException {
-        this.exec(new Message(ServerFunction.Ping));
-    }
-    
     public Long addition(Long op1, Long op2) throws ServerFunctionException, IOException {
-        return exec(new MessageWithArgs(ServerFunction.Addition, op1, op2));
+        return addition(op1, op2, 0L);
+    }
+
+    public Long addition(Long op1, Long op2, Long delay) throws ServerFunctionException, IOException {
+        return exec(ServerFunction.Addition, op1, op2, delay);
     }
     
     public Long substraction(Long op1, Long op2) throws ServerFunctionException, IOException {
-        return exec(new MessageWithArgs(ServerFunction.Substraction, op1, op2));
+        return substraction(op1, op2, 0L);
+    }
+    
+    public Long substraction(Long op1, Long op2, Long delay) throws ServerFunctionException, IOException {
+        return exec(ServerFunction.Substraction, op1, op2, delay);
     }
     
     public Long multiplication(Long op1, Long op2) throws ServerFunctionException, IOException {
-        return exec(new MessageWithArgs(ServerFunction.Multiplication, op1, op2));
+        return multiplication(op1, op2, 0L);
+    }
+    
+    public Long multiplication(Long op1, Long op2, Long delay) throws ServerFunctionException, IOException {
+        return exec(ServerFunction.Multiplication, op1, op2, delay);
     }
     
     public Long division(Long op1, Long op2) throws ServerFunctionException, IOException {
-        return exec(new MessageWithArgs(ServerFunction.Division, op1, op2));
+        return division(op1, op2, 0L);
+    }
+    
+    public Long division(Long op1, Long op2, Long delay) throws ServerFunctionException, IOException {
+        return exec(ServerFunction.Division, op1, op2, delay);
     }
     
     public Long function01(Long op1, Long op2) throws ServerFunctionException, IOException {
-        return exec(new MessageWithArgs(ServerFunction.Function01, op1, op2));
-    }
-
-    public Long function02(Long op1, Long op2) throws ServerFunctionException, IOException {
-        return exec(new MessageWithArgs(ServerFunction.Function02, op1, op2));
+        return function01(op1, op2, 0L);
     }
     
-    private Long exec(Message msg) throws ServerFunctionException, IOException {
+    public Long function01(Long op1, Long op2, Long delay) throws ServerFunctionException, IOException {
+        return exec(ServerFunction.Function01, op1, op2, delay);
+    }
+    
+    public Long function02(Long op1, Long op2) throws ServerFunctionException, IOException {
+        return function02(op1, op2, 0L);
+    }
+
+    public Long function02(Long op1, Long op2, Long delay) throws ServerFunctionException, IOException {
+        return exec(ServerFunction.Function02, op1, op2, delay);
+    }
+
+    private Long exec(ServerFunction func, Long op1, Long op2, Long delay) 
+            throws ServerFunctionException, IOException {
         
         OutputStream out = socket.getOutputStream();
         InputStream in = socket.getInputStream();
@@ -75,8 +101,12 @@ public class Client implements AutoCloseable {
         //
         
         // Building a message and a header
-        ByteBuffer bytes = msg.toBytes();
+        Message m = new Message(func, op1, op2, delay);
+        ByteBuffer bytes = m.toBytes();
         ByteBuffer sizeb = Message.toBytes(bytes.capacity());
+        
+        LOG.info(String.format("%s: about to send: %s, correlation = %d", 
+                this, m.getCode().name(), m.getCorrelation()));
         
         // Write both header and body
         out.write(sizeb.array());
@@ -106,18 +136,13 @@ public class Client implements AutoCloseable {
         // Correlation ID
         long corr = body.getLong();
         
+        LOG.info(String.format("%s: received body: %s, correlation = %d", 
+                this, resp.name(), corr));
+        
         // Check if it is my message
-        if (corr == msg.getCorrelation()) {
+        if (corr == m.getCorrelation()) {
             switch (resp) {
                 
-                case Pong:
-                    
-                    return 0L;
-                
-                case Closed:
-                    
-                    return 0L;
-                    
                 case Success:
                     
                     // Return result
@@ -136,7 +161,7 @@ public class Client implements AutoCloseable {
                     
             }
         } else {
-            throw new IOException("Wrong correlation id received: expected " + msg.getCorrelation() + ", got " + corr);
+            throw new IOException("Wrong correlation id received: expected " + m.getCorrelation() + ", got " + corr);
         }
         
         return 0L;
@@ -144,16 +169,7 @@ public class Client implements AutoCloseable {
     
     @Override
     public void close() throws Exception {
-        
-        // Lets try to close gracefully...
-        try {
-            this.exec(new Message(ServerFunction.Close));
-        } catch (ServerFunctionException | IOException ex) {
-            // and do not worry if failed.
-        }
-        
         socket.close();
-        
     }
 
 }

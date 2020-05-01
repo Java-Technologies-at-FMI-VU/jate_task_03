@@ -7,9 +7,9 @@ public abstract class TestCaseRunnable implements Runnable {
     public TestCaseRunnable(MultiThreadedTestCase testCase) {
         this.testCase = testCase;
     }
-    
-    public abstract void runTestCase() throws Throwable;
 
+    public abstract void runTestCase() throws Throwable;
+    
     @Override
     public void run() {
         try {

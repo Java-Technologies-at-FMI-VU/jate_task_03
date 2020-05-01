@@ -24,5 +24,5 @@ public enum ServerFunction {
     public int getCode() {
         return code;
     }
-    
+
 }

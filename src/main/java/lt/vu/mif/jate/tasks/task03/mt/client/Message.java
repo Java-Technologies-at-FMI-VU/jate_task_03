@@ -9,16 +9,25 @@ public class Message {
     
     private final ServerFunction code;
     private final Long correlation;
-
-    public Message(ServerFunction code) {
+    private final Long delay;
+    private final Long op1;
+    private final Long op2;
+    
+    public Message(ServerFunction code, Long op1, Long op2, Long delay) {
         this.code = code;
+        this.op1 = op1;
+        this.op2 = op2;
         this.correlation = CORRELATION_SEQ.incrementAndGet();
+        this.delay = delay;
     }
     
     public ByteBuffer toBytes() {
-        ByteBuffer buf = ByteBuffer.allocate(12);
+        ByteBuffer buf = ByteBuffer.allocate(4 + 8 + 8 + 8 + 8);
         buf.putInt(code.getCode());
         buf.putLong(correlation);
+        buf.putLong(delay);
+        buf.putLong(op1);
+        buf.putLong(op2);
         buf.rewind();
         return buf;
     }
@@ -30,12 +39,12 @@ public class Message {
         return b;
     }
 
-    public ServerFunction getCode() {
-        return code;
-    }
-
     public Long getCorrelation() {
         return correlation;
     }
 
+    public ServerFunction getCode() {
+        return code;
+    }
+    
 }

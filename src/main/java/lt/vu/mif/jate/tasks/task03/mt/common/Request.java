@@ -24,7 +24,7 @@ public enum Request {
 
     public int getCode() {
         return code;
-    }
+    }    
     
     public static Request fromInt(int code) {
         for (Request r: values()) {
